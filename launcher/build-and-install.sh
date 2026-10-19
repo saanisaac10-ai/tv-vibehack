@@ -13,13 +13,24 @@ PY=../tools/venv/bin/python
 export MSYS_NO_PATHCONV=1
 # Which app owns Home differs by build (com.google.android.tvlauncher on Android TV,
 # com.google.android.apps.tv.launcherx on newer Google TV), so ask the TV instead of guessing.
-# Ignore an answer of our own launcher, left over from a previous run of this script.
 if [ -z "${STOCK_LAUNCHER:-}" ]; then
   STOCK_LAUNCHER=$("$PY" -I ../tools/tv.py \
     'cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME' \
     | tail -n 1 | cut -d/ -f1 || true)
   case "$STOCK_LAUNCHER" in
-    com.gathin.tvhome | *[!a-zA-Z0-9._]* | "") STOCK_LAUNCHER=com.google.android.tvlauncher ;;
+    com.gathin.tvhome | *[!a-zA-Z0-9._]* | "")
+      # Home already answers with our own launcher (a previous run of this script), or the TV
+      # gave nothing usable. Asking again would not help, so look for whichever stock launcher
+      # is actually installed - guessing one that isn't just makes the disable step a no-op.
+      INSTALLED=$("$PY" -I ../tools/tv.py 'pm list packages' | sed 's/^package://' || true)
+      STOCK_LAUNCHER=com.google.android.tvlauncher
+      for candidate in com.google.android.apps.tv.launcherx com.google.android.tvlauncher; do
+        if printf '%s\n' "$INSTALLED" | grep -qx "$candidate"; then
+          STOCK_LAUNCHER="$candidate"
+          break
+        fi
+      done
+      ;;
   esac
   echo "Stock launcher: $STOCK_LAUNCHER"
 fi
