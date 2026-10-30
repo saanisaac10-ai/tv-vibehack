@@ -19,31 +19,27 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- The hours and minutes as flip-clock cards; AM/PM sits at their foot. -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:baselineAligned="true">
+            android:baselineAligned="false"
+            android:gravity="bottom">
+
+            <com.gathin.tvhome.FlipClockView
+                android:layout_width="wrap_content"
+                android:layout_height="190dp" />
 
             <TextClock
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:format12Hour="h:mm"
-                android:format24Hour="HH:mm"
-                android:textColor="#E6FFFFFF"
-                android:textSize="120sp"
-                android:fontFamily="@string/font_extralight"
-                android:letterSpacing="-0.04"
-                android:includeFontPadding="false" />
-
-            <TextClock
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:layout_marginStart="14dp"
+                android:layout_marginBottom="18dp"
                 android:format12Hour="a"
                 android:format24Hour=""
                 android:textColor="#99FFFFFF"
-                android:textSize="22sp"
+                android:textSize="26sp"
                 android:fontFamily="@string/font_medium"
                 android:letterSpacing="0.08"
                 android:textAllCaps="true" />
